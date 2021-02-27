@@ -18,7 +18,7 @@ export const PomodoroWrapper = styled.div`
   position: relative;
   color: white;
   overflow: hidden;
-  background-color: rgba(#788563, 0.9);
+  background-color: ${color_background};
 `;
 
 export const PomodoroHeader = styled.header`
