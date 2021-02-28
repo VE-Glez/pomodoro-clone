@@ -11,13 +11,7 @@ import {
 import { useState, useEffect, useContext, useReducer } from "react";
 
 //import logic for useReducer
-import {
-  allPomodoroStates,
-  pomodoroReducer,
-  types,
-  settingsReducer,
-  typesSlidersSettings,
-} from "./reducer";
+import { allPomodoroStates, pomodoroReducer, types } from "./reducer";
 
 //import styled components
 import {
@@ -49,21 +43,12 @@ const Pomodoro = () => {
     allPomodoroStates
   );
 
-  const [globlalSettings, settingsDispatch] = useReducer(
-    settingsReducer,
-    allPomodoroStates.defaultSettings
-  );
   let timer = myPomodoroState.actualTimer;
-  // const [timer, setTimer] = useState({
-  //   minutes: 25, //slider Math.floor and this%value
-  //   seconds: 0,
-  //   playing: false,
-  //   phase: 1,
-  // });
+
   const [autoPlay, setAutoPlay] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
-  var percentage = ((timer.minutes * 60 + timer.seconds) * 100) / (25 * 60);
-
+  // var percentage = ((timer.minutes * 60 + timer.seconds) * 100) / (25 * 60);
+  //percentage sirve para cambio dinamico a la velocidad del timer
   const handlePomodoroStage = (initialState) => {
     let minutes = initialState.minutes;
     let seconds = initialState.seconds;
@@ -88,7 +73,6 @@ const Pomodoro = () => {
   useEffect(() => {
     if (timer.playing) {
       var c = setInterval(() => {
-        // setTimer((pS) => handlePomodoroStage(pS));
         pomodoroDispatch({
           type: types.UPDATING_CURRENT_PHASE,
           payload: handlePomodoroStage(timer),
@@ -101,42 +85,17 @@ const Pomodoro = () => {
   }, [timer.playing, timer.seconds]);
 
   const handlePlay = (e) => {
-    // setTimer({ ...timer, playing: !timer.playing });
     pomodoroDispatch({ type: types.PLAY_PAUSE });
     console.log(
       `estoy cambiando timer.playing de ${timer.playing} a ${!timer.playing}`
     );
   };
 
-  const [cambio, setCambio] = useState(0);
   const handleSliderChange = (e) => {
-    //NO FUNCIONA FALTA EXPORTAR UN OBJETO CON TODOS LOS SETTINGS DE SLIDERS
-    console.log(
-      "global settings (before): ",
-      globlalSettings,
-      `AND CAMBIO: ${cambio} AND NAME: ${e.target.name}`
-    );
-    const cambioPromise = new Promise((resolver, reject) => {
-      setCambio((pv) => pv + 1);
-      console.log(`movimiento número (inside) ${cambio}`);
+    pomodoroDispatch({
+      type: types.UPDATE_SETTINGS,
+      payload: [e.target.name, e.target.value],
     });
-    const myPromise = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        settingsDispatch({ type: e.target.name, payload: e.target.value });
-      }, 50);
-    });
-
-    cambioPromise
-      .then(console.log(`movimiento numero (OUTSIDE) ${cambio}`))
-      .then(myPromise)
-      .then(
-        pomodoroDispatch({
-          type: types.UPDATE_SETTINGS,
-          payload: globlalSettings,
-        })
-      );
-
-    console.log("global settings(after): ", globlalSettings);
   };
 
   return (
@@ -159,7 +118,7 @@ const Pomodoro = () => {
             defaultTime={`${myPomodoroState.defaultSettings.timer}:00`}
           >
             <Slider
-              name={typesSlidersSettings.TIMER}
+              name={types.TIMER}
               initial={myPomodoroState.defaultSettings.timer}
               color={myTheme.color_timer}
               onInput={handleSliderChange}
@@ -170,7 +129,7 @@ const Pomodoro = () => {
             defaultTime={`${myPomodoroState.defaultSettings.short_break}:00`}
           >
             <Slider
-              name={typesSlidersSettings.SHORT_BREAK}
+              name={types.SHORT_BREAK}
               initial={myPomodoroState.defaultSettings.short_break}
               color={myTheme.color_short_break}
               onInput={handleSliderChange}
@@ -181,7 +140,7 @@ const Pomodoro = () => {
             defaultTime={`${myPomodoroState.defaultSettings.long_break}:00`}
           >
             <Slider
-              name={typesSlidersSettings.LONG_BREAK}
+              name={types.LONG_BREAK}
               initial={myPomodoroState.defaultSettings.long_break}
               color={myTheme.color_long_break}
               onInput={handleSliderChange}
@@ -192,7 +151,7 @@ const Pomodoro = () => {
             defaultTime={`${myPomodoroState.defaultSettings.rounds}`}
           >
             <Slider
-              name={typesSlidersSettings.ROUND}
+              name={types.ROUND}
               initial={myPomodoroState.defaultSettings.rounds}
               color={myTheme.color_rounds}
               onInput={handleSliderChange}
@@ -202,7 +161,6 @@ const Pomodoro = () => {
 
           <button
             onClick={() => {
-              console.log("BOTON REINICIO DE ESTADOS", globlalSettings);
               pomodoroDispatch({ type: types.RESET_DEFAULT_SETTINGS });
             }}
           >
@@ -239,7 +197,7 @@ const Pomodoro = () => {
         </div>
       </HiddenMenu>
       <MoreSettings click={isVisible} theme={myTheme} />
-      <Clock theme={myTheme} valor={`${100 - percentage}%`}>
+      <Clock theme={myTheme} /*valor={`${100 - percentage}%`}*/>
         <div className="elements-wrapper">
           <CountDown>
             {timer.minutes}:

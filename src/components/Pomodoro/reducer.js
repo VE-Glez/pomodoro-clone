@@ -36,17 +36,40 @@ export const types = {
   PLAY_PAUSE: "PLAY_PAUSE",
   UPDATING_CURRENT_PHASE: "UPDATING_CURRENT_PHASE",
   RESET_DEFAULT_SETTINGS: "RESET_DEFAULT_SETTINGS",
+  TIMER: "TIMER",
+  SHORT_BREAK: "SHORT_BREAK",
+  LONG_BREAK: "LONG_BREAK",
+  ROUND: "ROUND",
+  RESET: "RESET",
 };
 
 export const pomodoroReducer = (state, action) => {
   switch (action.type) {
     case types.UPDATE_SETTINGS: //los slider cambian los defaults cuando tienen nuevos values
       //action.payload regresa un objeto con los nuevos each.timers.value, short, long, phase values
-
+      let [name, value] = action.payload;
+      let current;
+      switch (name) {
+        case types.TIMER:
+          current = { ...state.defaultSettings, timer: value };
+          break;
+        case types.SHORT_BREAK:
+          current = { ...state.defaultSettings, short_break: value };
+          break;
+        case types.LONG_BREAK:
+          current = { ...state.defaultSettings, long_break: value };
+          break;
+        case types.ROUND:
+          current = { ...state.defaultSettings, rounds: value };
+          break;
+        default:
+          current = state.defaultSettings;
+          break;
+      }
       return {
         ...state,
-        defaultSettings: action.payload,
-        actualTimer: actualTimer(action.payload, state.actualRound),
+        defaultSettings: current,
+        actualTimer: actualTimer(current, state.actualRound),
       };
     case types.CHANGE_PHASE: //cuando el contador llega a cero cambia al siguiente segmento
       if (action.payload) {
@@ -92,34 +115,6 @@ export const pomodoroReducer = (state, action) => {
       };
     default:
       console.log("reducer en default, retornando state");
-      return state;
-  }
-};
-
-//HERE START THE LOGIC TO RETURN A OBJECTS THAT CONTAINS THE PAYLOAD FOR TYPES.UPDATE_SETTINGS
-
-export const typesSlidersSettings = {
-  TIMER: "TIMER",
-  SHORT_BREAK: "SHORT_BREAK",
-  LONG_BREAK: "LONG_BREAK",
-  ROUND: "ROUND",
-  RESET: "RESET",
-};
-
-export const settingsReducer = (state, action) => {
-  switch (action.type) {
-    case typesSlidersSettings.TIMER:
-      return { ...state, timer: action.payload };
-    case typesSlidersSettings.SHORT_BREAK:
-      return { ...state, short_break: action.payload };
-    case typesSlidersSettings.LONG_BREAK:
-      return { ...state, long_break: action.payload };
-    case typesSlidersSettings.ROUND:
-      return { ...state, rounds: action.payload };
-    case typesSlidersSettings.RESET:
-      return allPomodoroStates.defaultSettings;
-    default:
-      console.log("Retornando default settings reducer");
       return state;
   }
 };

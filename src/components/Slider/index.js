@@ -6,7 +6,7 @@ const Slider = ({
   //no creo que necesite ID y si lo necesita entonces isRequired
   name,
   onInput,
-  min = 0,
+  min = 1,
   max = 100,
   step = 1,
   initial = max / step,
