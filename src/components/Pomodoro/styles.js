@@ -10,36 +10,36 @@ export const PomodoroWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 20px;
   max-width: 300px;
   min-height: 250px;
+  position: relative;
+  overflow: hidden;
   border: 1px solid black;
   font-size: 1.5rem;
-  padding: 20px;
-  position: relative;
-  color: white;
-  overflow: hidden;
-  background-color: ${color_background};
+  color: ${({ theme }) => theme.color_text};
+  background-color: ${({ theme }) => theme.color_background};
 `;
 
 export const PomodoroHeader = styled.header`
-  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin: 10px 0 25px;
+  width: 100%;
   transition: ease all 1s;
   * {
     margin: 0;
   }
   h2 {
-    color: ${color_green};
+    color: ${({ theme }) => theme.color_title};
     font-size: 1rem;
   }
 
   svg {
     transition: 0.5s all ease;
     &:hover {
-      color: ${color_green};
+      color: ${({ theme }) => theme.color_title};
     }
 
     /* &:last-child {
@@ -49,20 +49,29 @@ export const PomodoroHeader = styled.header`
 `;
 
 export const Menu = styled.div`
-  transition: all ease 2s;
+  transition: all ease 1s;
+  position: relative;
+`;
 
-  .hiddenMenu {
+export const HiddenMenu = styled.div`
+  display: flex;
+  background-color: ${({ theme }) => theme.color_background_hidden_menu};
+  position: absolute;
+  top: 60px;
+  bottom: 30px;
+  left: ${({ clicked }) =>
+    clicked ? ({ actualPosition }) => actualPosition : "300px"};
+  z-index: 2;
+
+  .settings {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    background-color: ${color_background};
-    position: absolute;
-    top: 60px;
-    bottom: 0;
-    right: ${({ click }) => (click ? 0 : "300px")};
-    z-index: 2;
-    left: ${({ click }) => (click ? 0 : "-300px")};
+    min-width: 300px;
+    max-height: 400px;
+    padding: 0 10px;
+    overflow-y: scroll;
   }
 `;
 
@@ -71,7 +80,7 @@ export const Clock = styled.div.attrs((props) => ({ avanzado: props.valor }))`
   height: 250px;
   border-radius: 50%;
   padding: 10px;
-  background-color: ${color_red};
+  background-color: ${({ theme }) => theme.color_timer};
 
   .elements-wrapper {
     width: 100%;
@@ -82,7 +91,7 @@ export const Clock = styled.div.attrs((props) => ({ avanzado: props.valor }))`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: ${color_background};
+    background-color: ${({ theme }) => theme.color_background};
 
     * {
       /* border: 1px solid yellow; */
@@ -103,15 +112,15 @@ export const Control = styled.div`
   width: 75px;
   height: 75px;
   margin: 15px 0;
-  border: 3px solid rgb(${color_icons});
+  border: 3px solid ${({ theme }) => theme.color_icons};
   border-radius: 45px;
   position: relative;
   transition: all ease 0.5s;
 
   &:hover {
-    background-color: rgba(${color_icons}, 0.1);
+    background-color: ${({ theme }) => theme.color_button_hover};
     svg {
-      color: ${color_green};
+      color: ${({ theme }) => theme.color_title};
       transition: all ease 0.5s;
     }
   }
@@ -141,14 +150,18 @@ export const PomodoroFooter = styled.div`
     background-color: transparent;
     border: none;
     transition: 0.5 ease all;
-    color: rgba(${color_icons});
+    color: ${({ theme }) => theme.color_text};
 
     &:hover {
-      color: ${color_green};
+      color: ${({ theme }) => theme.color_short_break};
     }
   }
 
   .secondaryControls * {
     margin: 0 0 0 10px;
+
+    &:hover {
+      color: ${({ theme }) => theme.color_short_break};
+    }
   }
 `;

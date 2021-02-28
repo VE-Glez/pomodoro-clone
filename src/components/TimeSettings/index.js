@@ -1,11 +1,13 @@
 import { WrapperInput, Label, Time } from "./styles";
 import { Slider } from "../index";
-const TimeSettings = ({ title = "Title", defaultTime = "00:00" }) => {
+import { Children } from "react";
+
+const TimeSettings = ({ children, title = "Title", defaultTime = "00:00" }) => {
   return (
     <WrapperInput>
       <Label>{title}</Label>
       <Time>{defaultTime}</Time>
-      <Slider id="timer" color="rgba(254,77,76,1)" />
+      {children}
     </WrapperInput>
   );
 };

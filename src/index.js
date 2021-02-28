@@ -1,11 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import { Pomodoro } from "./components";
+import { Pomodoro, Slider } from "./components";
+import { ThemeProvider } from "./context/themes/themes";
+import { MenuViewProvider } from "./context/layout";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Pomodoro />
+    <ThemeProvider>
+      <MenuViewProvider>
+        <Pomodoro />
+      </MenuViewProvider>
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

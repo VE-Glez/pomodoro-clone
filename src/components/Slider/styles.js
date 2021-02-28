@@ -9,11 +9,10 @@ const track = `
 
 const thumb = `
 -webkit-appearance: none;
-border: 1px solid rgba(254,77,76,1);
 height: ${track_height + track_height * portion}px;
 width: ${track_height + track_height * portion}px;
 border-radius: ${track_height / 1.5}px;
-background: rgba(254,77,76,1);
+
 `;
 
 export const InputRange = styled.input`
@@ -43,6 +42,7 @@ export const InputRange = styled.input`
     ${track}
   }
   &::-webkit-slider-thumb {
+    background: ${({ color }) => color};
     ${thumb}
   }
   &::-moz-range-thumb {

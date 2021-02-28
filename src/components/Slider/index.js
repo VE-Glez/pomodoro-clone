@@ -1,9 +1,17 @@
-import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
+// import PropTypes from "prop-types";
+import { useState } from "react";
 import { InputRange } from "./styles";
 
-const Slider = ({ id, min = 0, max = 100, step = 1, color = "purple" }) => {
-  const initialValue = max / 4;
+const Slider = ({
+  //no creo que necesite ID y si lo necesita entonces isRequired
+  onInput,
+  min = 0,
+  max = 100,
+  step = 1,
+  initial = max / step,
+  color = "purple",
+}) => {
+  const initialValue = initial;
   const [rangeValue, setRangeValue] = useState(initialValue);
   const minValue = min;
   const maxValue = max;
@@ -19,21 +27,20 @@ const Slider = ({ id, min = 0, max = 100, step = 1, color = "purple" }) => {
     <InputRange
       percentage={percentage}
       onChange={handleChange}
+      onInput={onInput}
       type="range"
       min={minValue}
       max={maxValue}
       step={istep}
       // value={initialValue}
       value={rangeValue}
-      name={id}
-      id={id}
       color={color}
     />
   );
 };
 
-Slider.propTypes = {
-  id: PropTypes.string.isRequired,
-};
+// Slider.propTypes = {
+//   id: PropTypes.string.isRequired,
+// };
 
 export default Slider;
