@@ -4,6 +4,7 @@ import { InputRange } from "./styles";
 
 const Slider = ({
   //no creo que necesite ID y si lo necesita entonces isRequired
+  name,
   onInput,
   min = 0,
   max = 100,
@@ -35,6 +36,7 @@ const Slider = ({
       // value={initialValue}
       value={rangeValue}
       color={color}
+      name={name}
     />
   );
 };
