@@ -56,10 +56,12 @@ const Pomodoro = () => {
     if (seconds < 0) {
       minutes = minutes - 1;
       if (minutes < 0) {
-        return pomodoroDispatch({
+        pomodoroDispatch({
           type: types.CHANGE_PHASE,
           payload: autoPlay,
         });
+        console.log(timer, myPomodoroState.actualRound);
+        return { timer };
       }
       seconds = 59;
     }
@@ -89,6 +91,7 @@ const Pomodoro = () => {
     console.log(
       `estoy cambiando timer.playing de ${timer.playing} a ${!timer.playing}`
     );
+    console.log("y el timer es: ", timer);
   };
 
   const handleSliderChange = (e) => {
@@ -203,7 +206,7 @@ const Pomodoro = () => {
             {timer.minutes}:
             {timer.seconds < 10 ? "0" + timer.seconds : timer.seconds}
           </CountDown>
-          <p>FOCUS</p>
+          <p>{timer.title}</p>
         </div>
       </Clock>
       <Control theme={myTheme} onClick={handlePlay}>

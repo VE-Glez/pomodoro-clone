@@ -9,11 +9,11 @@ let actualRound = 1;
 
 const getActualPhase = (defaults, actual) => {
   if (actual % defaults.rounds == 0) {
-    return ["long break", defaults.long_break];
+    return ["LONG BREAK", defaults.long_break];
   } else if (actual % 2 == 0) {
-    return ["short break", defaults.short_break];
+    return ["SHORT BREAK", defaults.short_break];
   } else {
-    return ["timer", defaults.timer];
+    return ["FOCUS", defaults.timer];
   }
 };
 
@@ -36,6 +36,7 @@ export const types = {
   PLAY_PAUSE: "PLAY_PAUSE",
   UPDATING_CURRENT_PHASE: "UPDATING_CURRENT_PHASE",
   RESET_DEFAULT_SETTINGS: "RESET_DEFAULT_SETTINGS",
+  SKIP_CURRENT_PHASE: "SKIP_CURRENT_PHASE",
   TIMER: "TIMER",
   SHORT_BREAK: "SHORT_BREAK",
   LONG_BREAK: "LONG_BREAK",
@@ -66,12 +67,14 @@ export const pomodoroReducer = (state, action) => {
           current = state.defaultSettings;
           break;
       }
+      console.log("update settings current: ", current);
       return {
         ...state,
         defaultSettings: current,
         actualTimer: actualTimer(current, state.actualRound),
       };
     case types.CHANGE_PHASE: //cuando el contador llega a cero cambia al siguiente segmento
+      console.log("payload autoplay: ", action.payload);
       if (action.payload) {
         //si se activa auto-start-next-phase
         return {
