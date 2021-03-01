@@ -15,6 +15,7 @@ import { allPomodoroStates, pomodoroReducer, types } from "./reducer";
 
 //import styled components
 import {
+  PomodorosFinalizados,
   Menu,
   HiddenMenu,
   PomodoroHeader,
@@ -42,10 +43,14 @@ const Pomodoro = () => {
     pomodoroReducer,
     allPomodoroStates
   );
-
+  //esto es un test
+  // const [velocidad, setVelocidad] = useState(1000);
+  // const handleVelocidad = (e) => {
+  //   setVelocidad(e.target.value);
+  // };
   let timer = myPomodoroState.actualTimer;
-
-  const [autoPlay, setAutoPlay] = useState(true);
+  const [checked, setChecked] = useState(true);
+  const [autoPlay, setAutoPlay] = useState(checked);
   const [isVisible, setIsVisible] = useState(false);
   // var percentage = ((timer.minutes * 60 + timer.seconds) * 100) / (25 * 60);
   //percentage sirve para cambio dinamico a la velocidad del timer
@@ -56,12 +61,7 @@ const Pomodoro = () => {
     if (seconds < 0) {
       minutes = minutes - 1;
       if (minutes < 0) {
-        pomodoroDispatch({
-          type: types.CHANGE_PHASE,
-          payload: autoPlay,
-        });
-        console.log(timer, myPomodoroState.actualRound);
-        return { timer };
+        return initialState;
       }
       seconds = 59;
     }
@@ -77,9 +77,9 @@ const Pomodoro = () => {
       var c = setInterval(() => {
         pomodoroDispatch({
           type: types.UPDATING_CURRENT_PHASE,
-          payload: handlePomodoroStage(timer),
+          payload: [handlePomodoroStage(timer), autoPlay],
         });
-      }, 100);
+      }, 1000);
     }
     return () => {
       clearInterval(c);
@@ -88,10 +88,8 @@ const Pomodoro = () => {
 
   const handlePlay = (e) => {
     pomodoroDispatch({ type: types.PLAY_PAUSE });
-    console.log(
-      `estoy cambiando timer.playing de ${timer.playing} a ${!timer.playing}`
-    );
-    console.log("y el timer es: ", timer);
+    // console.log(`estoy cambiando timer.playing de ${timer.playing} a ${!timer.playing}`);
+    // console.log("y el timer es: ", timer);
   };
 
   const handleSliderChange = (e) => {
@@ -103,6 +101,7 @@ const Pomodoro = () => {
 
   return (
     <PomodoroWrapper theme={myTheme}>
+      {/* <Slider name="test" onInput={handleVelocidad} max={500} step={10} /> */}
       <PomodoroHeader theme={myTheme}>
         <Menu theme={myTheme} click={isVisible}>
           {isVisible ? (
@@ -176,7 +175,12 @@ const Pomodoro = () => {
             <li>always on top</li>
             <li>
               Auto-start next phase
-              <input type="checkbox" onInput={() => setAutoPlay(!autoPlay)} />
+              <input
+                defaultChecked={checked}
+                onChange={() => setChecked(!checked)}
+                type="checkbox"
+                onInput={() => setAutoPlay(!autoPlay)}
+              />
             </li>
 
             <li>Tick sounds</li>
@@ -200,7 +204,10 @@ const Pomodoro = () => {
         </div>
       </HiddenMenu>
       <MoreSettings click={isVisible} theme={myTheme} />
-      <Clock theme={myTheme} /*valor={`${100 - percentage}%`}*/>
+      <Clock
+        phase={timer.title}
+        theme={myTheme} /*valor={`${100 - percentage}%`}*/
+      >
         <div className="elements-wrapper">
           <CountDown>
             {timer.minutes}:
@@ -214,11 +221,36 @@ const Pomodoro = () => {
       </Control>
       <PomodoroFooter theme={myTheme}>
         <div className="lap">
-          <p>{myPomodoroState.actualRound}/4</p>
-          <button>Reset</button>
+          <p>
+            {myPomodoroState.actualRound}/
+            {myPomodoroState.defaultSettings.rounds}
+            <span>({myPomodoroState.actualPhase})</span>
+          </p>
+          <button
+            onClick={() =>
+              pomodoroDispatch({ type: types.RESET_CURRENT_PHASE })
+            }
+          >
+            Reset
+          </button>
         </div>
+        {myPomodoroState.finishedPomodoros > 0 && (
+          <PomodorosFinalizados>
+            {" "}
+            Pomodoros <br />
+            finalizados: <br />
+            {myPomodoroState.finishedPomodoros}
+          </PomodorosFinalizados>
+        )}
         <div className="secondaryControls">
-          <RiSkipForwardFill />
+          <RiSkipForwardFill
+            onClick={() =>
+              pomodoroDispatch({
+                type: types.SKIP_CURRENT_PHASE,
+                payload: autoPlay,
+              })
+            }
+          />
           <HiVolumeUp />
         </div>
       </PomodoroFooter>

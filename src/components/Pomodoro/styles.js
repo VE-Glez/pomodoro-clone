@@ -27,7 +27,7 @@ export const PomodoroHeader = styled.header`
   align-items: flex-start;
   margin: 10px 0 25px;
   width: 100%;
-  transition: ease all 1s;
+  /* transition: ease all 0.2s; */
   * {
     margin: 0;
   }
@@ -37,7 +37,7 @@ export const PomodoroHeader = styled.header`
   }
 
   svg {
-    transition: 0.5s all ease;
+    /* transition: 0.5s all ease; */
     &:hover {
       color: ${({ theme }) => theme.color_title};
     }
@@ -49,7 +49,7 @@ export const PomodoroHeader = styled.header`
 `;
 
 export const Menu = styled.div`
-  transition: all ease 1s;
+  /* transition: all ease 1s; */
   position: relative;
 `;
 
@@ -66,12 +66,17 @@ export const HiddenMenu = styled.div`
   .settings {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     min-width: 300px;
-    max-height: 400px;
+    max-height: 475px;
     padding: 0 10px;
     overflow-y: scroll;
+    font-size: 0.8em;
+    &.timeSettings {
+      justify-content: space-between;
+      padding: 10px 0;
+    }
   }
 `;
 
@@ -80,7 +85,14 @@ export const Clock = styled.div.attrs((props) => ({ avanzado: props.valor }))`
   height: 250px;
   border-radius: 50%;
   padding: 10px;
-  background-color: ${({ theme }) => theme.color_timer};
+  background-color: ${({ theme, phase }) =>
+    phase == "FOCUS"
+      ? theme.color_timer
+      : phase == "SHORT BREAK"
+      ? theme.color_short_break
+      : phase == "LONG BREAK"
+      ? theme.color_long_break
+      : "yellow"};
 
   .elements-wrapper {
     width: 100%;
@@ -164,4 +176,9 @@ export const PomodoroFooter = styled.div`
       color: ${({ theme }) => theme.color_short_break};
     }
   }
+`;
+
+export const PomodorosFinalizados = styled.p`
+  font-size: 0.75em;
+  text-align: center;
 `;

@@ -6,33 +6,43 @@ let defaultSettings = {
 };
 
 let actualRound = 1;
+let actualPhase = 1;
+let finishedPomodoros = 0;
 
-const getActualPhase = (defaults, actual) => {
-  if (actual % defaults.rounds == 0) {
+const getActualPhase = (defaults, ronda, fase) => {
+  //ronda es la ronda ronda, 1 ronda equivale a un focus + 1 short break (2 fases)
+  //defaults es defaultSettings
+
+  // console.log(
+  //   `la ronda ronda es_ ${ronda} y la fase es ${fase} los defaults.rounds: ${defaults.rounds}`
+  // );
+  if (ronda % defaults.rounds == 0 && fase % 2 == 0) {
+    //si la ronda actual divido entre las rondas necesarias para un long break entonces
     return ["LONG BREAK", defaults.long_break];
-  } else if (actual % 2 == 0) {
+  } else if (fase % 2 == 0) {
     return ["SHORT BREAK", defaults.short_break];
   } else {
     return ["FOCUS", defaults.timer];
   }
 };
 
-const actualTimer = (dS, aR, autoPlay = false) => {
+const actualTimer = (dS, aR, fase, autoPlay = false) => {
   //dS es el defaultSettings (la lista de configuraciones del los sliders)
   //aR es actualRound (la ronda en la que se encuentra actualmente el pomodoro)
-  let [title, minutes] = getActualPhase(dS, aR);
+  let [title, minutes] = getActualPhase(dS, aR, fase);
   return { title: title, minutes: minutes, seconds: 0, playing: autoPlay };
 };
 
 export const allPomodoroStates = {
   defaultSettings,
-  actualTimer: actualTimer(defaultSettings, actualRound),
+  actualTimer: actualTimer(defaultSettings, actualRound, actualPhase),
   actualRound,
+  actualPhase,
+  finishedPomodoros,
 };
 
 export const types = {
   UPDATE_SETTINGS: "UPDATE_SETTINGS",
-  CHANGE_PHASE: "CHANGE_PHASE",
   PLAY_PAUSE: "PLAY_PAUSE",
   UPDATING_CURRENT_PHASE: "UPDATING_CURRENT_PHASE",
   RESET_DEFAULT_SETTINGS: "RESET_DEFAULT_SETTINGS",
@@ -41,7 +51,7 @@ export const types = {
   SHORT_BREAK: "SHORT_BREAK",
   LONG_BREAK: "LONG_BREAK",
   ROUND: "ROUND",
-  RESET: "RESET",
+  RESET_CURRENT_PHASE: "RESET_CURRENT_PHASE",
 };
 
 export const pomodoroReducer = (state, action) => {
@@ -67,35 +77,54 @@ export const pomodoroReducer = (state, action) => {
           current = state.defaultSettings;
           break;
       }
-      console.log("update settings current: ", current);
       return {
         ...state,
         defaultSettings: current,
-        actualTimer: actualTimer(current, state.actualRound),
+        actualTimer: actualTimer(current, state.actualRound, state.actualPhase),
       };
-    case types.CHANGE_PHASE: //cuando el contador llega a cero cambia al siguiente segmento
-      console.log("payload autoplay: ", action.payload);
-      if (action.payload) {
-        //si se activa auto-start-next-phase
-        return {
-          ...state,
-          actualTimer: actualTimer(
-            state.defaultSettings,
-            state.actualRound + 1,
-            true
-          ),
-          actualRound: state.actualRound + 1,
-        };
+    case types.UPDATING_CURRENT_PHASE: //es el timer, se activa cuando playing: true
+      let [actualTime, autoPlay] = action.payload;
+      //si el contador llega a cero se inicia la siguiente fase
+      if (actualTime.minutes == 0 && actualTime.seconds == 0) {
+        let actual_round = Math.ceil((state.actualPhase + 1) / 2);
+        if (actual_round > state.defaultSettings.rounds) {
+          return {
+            ...state,
+            actualTimer: actualTimer(state.defaultSettings, 1, 1),
+            actualRound: 1,
+            actualPhase: 1,
+            finishedPomodoros: state.finishedPomodoros + 1,
+          };
+        }
+        if (autoPlay) {
+          //si se activa auto-start-next-phase
+          return {
+            ...state,
+            actualTimer: actualTimer(
+              state.defaultSettings,
+              actual_round,
+              state.actualPhase + 1,
+              true
+            ),
+            actualRound: actual_round,
+            actualPhase: state.actualPhase + 1,
+          };
+        } else {
+          return {
+            ...state,
+            actualTimer: actualTimer(
+              state.defaultSettings,
+              actual_round,
+              state.actualPhase + 1
+            ),
+            actualRound: actual_round,
+            actualPhase: state.actualPhase + 1,
+          };
+        }
       } else {
-        return {
-          ...state,
-          actualTimer: actualTimer(
-            state.defaultSettings,
-            state.actualRound + 1
-          ),
-          actualRound: state.actualRound + 1,
-        };
+        return { ...state, actualTimer: actualTime };
       }
+
     case types.PLAY_PAUSE: //pausa o continua el conteo
       var temporalActualTimer = state.actualTimer;
       return {
@@ -105,16 +134,48 @@ export const pomodoroReducer = (state, action) => {
           playing: !temporalActualTimer.playing,
         },
       };
-    case types.UPDATING_CURRENT_PHASE: //es el timer, se activa cuando playing: true
-      return { ...state, actualTimer: action.payload };
+
     case types.RESET_DEFAULT_SETTINGS: //el contador se reinicia con la configuracion predeterminada, la fase se mantiene
       return {
         ...state,
         defaultSettings: allPomodoroStates.defaultSettings,
         actualTimer: actualTimer(
           allPomodoroStates.defaultSettings,
-          state.actualRound
+          state.actualRound,
+          state.actualPhase
         ),
+      };
+
+    case types.RESET_CURRENT_PHASE:
+      return {
+        ...state,
+        actualTimer: actualTimer(
+          state.defaultSettings,
+          state.actualRound,
+          state.actualPhase
+        ),
+      };
+    case types.SKIP_CURRENT_PHASE:
+      let actual_round = Math.ceil((state.actualPhase + 1) / 2);
+      if (actual_round > state.defaultSettings.rounds) {
+        return {
+          ...state,
+          actualTimer: actualTimer(state.defaultSettings, 1, 1),
+          actualRound: 1,
+          actualPhase: 1,
+          finishedPomodoros: state.finishedPomodoros + 1,
+        };
+      }
+      return {
+        ...state,
+        actualTimer: actualTimer(
+          state.defaultSettings,
+          actual_round,
+          state.actualPhase + 1,
+          action.payload
+        ),
+        actualRound: actual_round,
+        actualPhase: state.actualPhase + 1,
       };
     default:
       console.log("reducer en default, retornando state");
