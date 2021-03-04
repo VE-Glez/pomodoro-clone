@@ -27,7 +27,7 @@ import {
 } from "./styles";
 
 //import components
-import { TimeSettings, MoreSettings } from "../index";
+import { TimeSettings, MoreSettings, MySwitch } from "../index";
 
 //import contexts
 import { AllThemes } from "../../context/themes/themes";
@@ -49,8 +49,8 @@ const Pomodoro = () => {
   //   setVelocidad(e.target.value);
   // };
   let timer = myPomodoroState.actualTimer;
-  const [checked, setChecked] = useState(true);
-  const [autoPlay, setAutoPlay] = useState(checked);
+  // const [checked, setChecked] = useState(true);
+  const [autoPlay, setAutoPlay] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   // var percentage = ((timer.minutes * 60 + timer.seconds) * 100) / (25 * 60);
   //percentage sirve para cambio dinamico a la velocidad del timer
@@ -88,8 +88,6 @@ const Pomodoro = () => {
 
   const handlePlay = (e) => {
     pomodoroDispatch({ type: types.PLAY_PAUSE });
-    // console.log(`estoy cambiando timer.playing de ${timer.playing} a ${!timer.playing}`);
-    // console.log("y el timer es: ", timer);
   };
 
   const handleSliderChange = (e) => {
@@ -172,19 +170,12 @@ const Pomodoro = () => {
         <div className="settings appSettings">
           <h3>Configuraciones de este lugar</h3>
           <ul>
-            <li>always on top</li>
-            <li>
-              Auto-start next phase
-              <input
-                defaultChecked={checked}
-                onChange={() => setChecked(!checked)}
-                type="checkbox"
-                onInput={() => setAutoPlay(!autoPlay)}
-              />
-            </li>
-
-            <li>Tick sounds</li>
-            <li>Desktop notification</li>
+            <MySwitch
+              handleInput={() => setAutoPlay(!autoPlay)}
+              text="auto start"
+            />
+            <MySwitch handleInput={null} text="tick sounds" />
+            <MySwitch handleInput={null} text="activate notifications" />
           </ul>
         </div>
         <div className="settings themeSettings">
@@ -200,7 +191,22 @@ const Pomodoro = () => {
           <h3>Credits</h3>
           <p>This app has been created with React 17.0.1</p>
           <p>Made by Valentin Eduardo Gonzalez Morales</p>
-          <p>Inspired in "Pomotroid" (a pomodoro app for linux)</p>
+          <p>Inspired in "Pomotroid" (a pomodoro app written in vue.js)</p>
+          <p>
+            Please support the original project if your are interesting in this
+            app at{" "}
+            <a
+              href="https://github.com/Splode/pomotroid"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Pomotroid
+            </a>
+          </p>
+          <p>
+            I just created this as an exercise to learn react but it won be
+            maintained
+          </p>
         </div>
       </HiddenMenu>
       <MoreSettings click={isVisible} theme={myTheme} />

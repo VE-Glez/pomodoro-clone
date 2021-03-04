@@ -73,6 +73,9 @@ export const HiddenMenu = styled.div`
     padding: 0 10px;
     overflow-y: scroll;
     font-size: 0.8em;
+    &::-webkit-scrollbar {
+      display: none;
+    }
     &.timeSettings {
       justify-content: space-between;
       padding: 10px 0;

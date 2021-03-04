@@ -10,12 +10,6 @@ let actualPhase = 1;
 let finishedPomodoros = 0;
 
 const getActualPhase = (defaults, ronda, fase) => {
-  //ronda es la ronda ronda, 1 ronda equivale a un focus + 1 short break (2 fases)
-  //defaults es defaultSettings
-
-  // console.log(
-  //   `la ronda ronda es_ ${ronda} y la fase es ${fase} los defaults.rounds: ${defaults.rounds}`
-  // );
   if (ronda % defaults.rounds == 0 && fase % 2 == 0) {
     //si la ronda actual divido entre las rondas necesarias para un long break entonces
     return ["LONG BREAK", defaults.long_break];

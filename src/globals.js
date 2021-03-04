@@ -1,3 +1,6 @@
+import { createGlobalStyle } from "styled-components";
+
+export const Globales = createGlobalStyle`
 @import url("https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap");
 
 body {
@@ -23,3 +26,18 @@ code {
 * {
   box-sizing: border-box;
 }
+
+ul, li {
+  padding:0;
+  margin: 0;
+  list-style: none;
+  width: 100%;
+}
+
+a, a:visited {
+  text-decoration: none;
+  color: lightblue;
+  cursor: pointer;
+}
+
+`;
