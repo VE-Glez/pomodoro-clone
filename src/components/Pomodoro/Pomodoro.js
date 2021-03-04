@@ -49,7 +49,6 @@ const Pomodoro = () => {
   //   setVelocidad(e.target.value);
   // };
   let timer = myPomodoroState.actualTimer;
-  // const [checked, setChecked] = useState(true);
   const [autoPlay, setAutoPlay] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   // var percentage = ((timer.minutes * 60 + timer.seconds) * 100) / (25 * 60);
@@ -190,6 +189,16 @@ const Pomodoro = () => {
         <div className="settings about">
           <h3>Credits</h3>
           <p>This app has been created with React 17.0.1</p>
+          <p>
+            Link to this repo:{" "}
+            <a
+              href="https://github.com/VE-Glez/pomodoro-clone"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              here
+            </a>
+          </p>
           <p>Made by Valentin Eduardo Gonzalez Morales</p>
           <p>Inspired in "Pomotroid" (a pomodoro app written in vue.js)</p>
           <p>
